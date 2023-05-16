@@ -38,8 +38,10 @@ builder.Services.AddOpenIddict()
     // Register the OpenIddict server components.
     .AddServer(options =>
     {
-        // Enable the token endpoint.
-        options.SetTokenEndpointUris("connect/token");
+        // Enable the authorization, introspection and token endpoints.
+        options.SetAuthorizationEndpointUris("authorize")
+            .SetIntrospectionEndpointUris("introspect")
+            .SetTokenEndpointUris("token");
 
         // Enable the client credentials flow.
         options.AllowClientCredentialsFlow();
