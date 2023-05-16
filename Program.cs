@@ -45,11 +45,15 @@ builder.Services.AddOpenIddict()
         options.AllowClientCredentialsFlow();
 
         // Register the signing and encryption credentials.
-        options.AddDevelopmentEncryptionCertificate()
+        options
+            .AddDevelopmentEncryptionCertificate()
             .AddDevelopmentSigningCertificate();
 
+        options.DisableAccessTokenEncryption(); 
+        
         // Register the ASP.NET Core host and configure the ASP.NET Core options.
-        options.UseAspNetCore()
+        options
+            .UseAspNetCore()
             .EnableTokenEndpointPassthrough();
     })
 
