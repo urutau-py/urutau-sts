@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using urutau.Data;
 using urutau.Entities;
+using urutau.Services;
+using urutau.Services.Interfaces;
 using urutau.Workers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +21,8 @@ if (builder.Environment.IsProduction())
 }
 
 // Add services to the container.
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
 
 builder.Services.AddControllers();
 builder.Services.AddRazorPages();

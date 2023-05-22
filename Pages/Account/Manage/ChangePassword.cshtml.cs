@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using urutau.Attributes;
 using urutau.Constants;
+using urutau.Entities;
 
 namespace urutau.Pages.Account.Manage;
 
@@ -14,8 +15,8 @@ namespace urutau.Pages.Account.Manage;
 ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
-[IdentityDefaultUI(typeof(ChangePasswordModel<>))]
-public abstract class ChangePasswordModel : PageModel
+[IdentityDefaultUI(typeof(ChangePasswordModel))]
+public abstract class ChangePasswordBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -79,15 +80,15 @@ public abstract class ChangePasswordModel : PageModel
     public virtual Task<IActionResult> OnPostAsync() => throw new NotImplementedException();
 }
 
-internal sealed class ChangePasswordModel<TUser> : ChangePasswordModel where TUser : class
+internal sealed class ChangePasswordModel : ChangePasswordBaseModel
 {
-    private readonly UserManager<TUser> _userManager;
-    private readonly SignInManager<TUser> _signInManager;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ILogger<ChangePasswordModel> _logger;
 
     public ChangePasswordModel(
-        UserManager<TUser> userManager,
-        SignInManager<TUser> signInManager,
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
         ILogger<ChangePasswordModel> logger)
     {
         _userManager = userManager;

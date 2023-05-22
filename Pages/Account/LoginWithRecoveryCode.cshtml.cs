@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using urutau.Attributes;
 using urutau.Constants;
+using urutau.Entities;
 
 namespace urutau.Pages.Account;
 
@@ -17,8 +18,8 @@ namespace urutau.Pages.Account;
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
 [AllowAnonymous]
-[IdentityDefaultUI(typeof(LoginWithRecoveryCodeModel<>))]
-public abstract class LoginWithRecoveryCodeModel : PageModel
+[IdentityDefaultUI(typeof(LoginWithRecoveryCodeModel))]
+public abstract class LoginWithRecoveryCodeBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -63,15 +64,15 @@ public abstract class LoginWithRecoveryCodeModel : PageModel
     public virtual Task<IActionResult> OnPostAsync([StringSyntax(StringSyntaxAttribute.Uri)] string? returnUrl = null) => throw new NotImplementedException();
 }
 
-internal sealed class LoginWithRecoveryCodeModel<TUser> : LoginWithRecoveryCodeModel where TUser : class
+internal sealed class LoginWithRecoveryCodeModel : LoginWithRecoveryCodeBaseModel
 {
-    private readonly SignInManager<TUser> _signInManager;
-    private readonly UserManager<TUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<LoginWithRecoveryCodeModel> _logger;
 
     public LoginWithRecoveryCodeModel(
-        SignInManager<TUser> signInManager,
-        UserManager<TUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
+        UserManager<ApplicationUser> userManager,
         ILogger<LoginWithRecoveryCodeModel> logger)
     {
         _signInManager = signInManager;

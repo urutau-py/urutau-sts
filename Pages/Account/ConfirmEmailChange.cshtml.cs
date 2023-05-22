@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using urutau.Attributes;
+using urutau.Entities;
 
 namespace urutau.Pages.Account;
 
@@ -16,8 +17,8 @@ namespace urutau.Pages.Account;
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
 [AllowAnonymous]
-[IdentityDefaultUI(typeof(ConfirmEmailChangeModel<>))]
-public abstract class ConfirmEmailChangeModel : PageModel
+[IdentityDefaultUI(typeof(ConfirmEmailChangeModel))]
+public abstract class ConfirmEmailChangeBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -33,12 +34,12 @@ public abstract class ConfirmEmailChangeModel : PageModel
     public virtual Task<IActionResult> OnGetAsync(string userId, string email, string code) => throw new NotImplementedException();
 }
 
-internal sealed class ConfirmEmailChangeModel<TUser> : ConfirmEmailChangeModel where TUser : class
+internal sealed class ConfirmEmailChangeModel : ConfirmEmailChangeBaseModel
 {
-    private readonly UserManager<TUser> _userManager;
-    private readonly SignInManager<TUser> _signInManager;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
 
-    public ConfirmEmailChangeModel(UserManager<TUser> userManager, SignInManager<TUser> signInManager)
+    public ConfirmEmailChangeModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
     {
         _userManager = userManager;
         _signInManager = signInManager;

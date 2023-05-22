@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using urutau.Attributes;
+using urutau.Entities;
 using urutau.Services.Interfaces;
 
 namespace urutau.Pages.Account;
@@ -19,8 +20,8 @@ namespace urutau.Pages.Account;
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
 [AllowAnonymous]
-[IdentityDefaultUI(typeof(ForgotPasswordModel<>))]
-public abstract class ForgotPasswordModel : PageModel
+[IdentityDefaultUI(typeof(ForgotPasswordModel))]
+public abstract class ForgotPasswordBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -51,12 +52,12 @@ public abstract class ForgotPasswordModel : PageModel
     public virtual Task<IActionResult> OnPostAsync() => throw new NotImplementedException();
 }
 
-internal sealed class ForgotPasswordModel<TUser> : ForgotPasswordModel where TUser : class
+internal sealed class ForgotPasswordModel : ForgotPasswordBaseModel
 {
-    private readonly UserManager<TUser> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEmailSender _emailSender;
 
-    public ForgotPasswordModel(UserManager<TUser> userManager, IEmailSender emailSender)
+    public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender)
     {
         _userManager = userManager;
         _emailSender = emailSender;

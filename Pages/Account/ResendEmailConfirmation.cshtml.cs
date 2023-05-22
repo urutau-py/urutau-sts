@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using urutau.Attributes;
+using urutau.Entities;
 using urutau.Services.Interfaces;
 
 namespace urutau.Pages.Account;
@@ -19,8 +20,8 @@ namespace urutau.Pages.Account;
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
 [AllowAnonymous]
-[IdentityDefaultUI(typeof(ResendEmailConfirmationModel<>))]
-public class ResendEmailConfirmationModel : PageModel
+[IdentityDefaultUI(typeof(ResendEmailConfirmationModel))]
+public class ResendEmailConfirmationBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -57,12 +58,12 @@ public class ResendEmailConfirmationModel : PageModel
     public virtual Task<IActionResult> OnPostAsync() => throw new NotImplementedException();
 }
 
-internal sealed class ResendEmailConfirmationModel<TUser> : ResendEmailConfirmationModel where TUser : class
+internal sealed class ResendEmailConfirmationModel : ResendEmailConfirmationBaseModel
 {
-    private readonly UserManager<TUser> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEmailSender _emailSender;
 
-    public ResendEmailConfirmationModel(UserManager<TUser> userManager, IEmailSender emailSender)
+    public ResendEmailConfirmationModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender)
     {
         _userManager = userManager;
         _emailSender = emailSender;

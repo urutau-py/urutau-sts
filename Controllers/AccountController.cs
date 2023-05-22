@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Validation.AspNetCore;
 using urutau.Entities;
 using urutau.Models.Account;
 using urutau.Models.Shared;
@@ -9,6 +11,7 @@ namespace urutau.Controllers;
 
 [ApiController]
 [Route("api/account")]
+// [Authorize]
 public sealed class AccountController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;

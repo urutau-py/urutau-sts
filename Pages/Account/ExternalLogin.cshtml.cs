@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using urutau.Attributes;
 using urutau.Constants;
+using urutau.Entities;
 using urutau.Services.Interfaces;
 
 namespace urutau.Pages.Account;
@@ -22,8 +23,8 @@ namespace urutau.Pages.Account;
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
 [AllowAnonymous]
-[IdentityDefaultUI(typeof(ExternalLoginModel<>))]
-public class ExternalLoginModel : PageModel
+[IdentityDefaultUI(typeof(ExternalLoginModel))]
+public class ExternalLoginBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -91,19 +92,19 @@ public class ExternalLoginModel : PageModel
     public virtual Task<IActionResult> OnPostConfirmationAsync([StringSyntax(StringSyntaxAttribute.Uri)] string? returnUrl = null) => throw new NotImplementedException();
 }
 
-internal sealed class ExternalLoginModel<TUser> : ExternalLoginModel where TUser : class
+internal sealed class ExternalLoginModel : ExternalLoginBaseModel
 {
-    private readonly SignInManager<TUser> _signInManager;
-    private readonly UserManager<TUser> _userManager;
-    private readonly IUserStore<TUser> _userStore;
-    private readonly IUserEmailStore<TUser> _emailStore;
+    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IUserStore<ApplicationUser> _userStore;
+    private readonly IUserEmailStore<ApplicationUser> _emailStore;
     private readonly IEmailSender _emailSender;
     private readonly ILogger<ExternalLoginModel> _logger;
 
     public ExternalLoginModel(
-        SignInManager<TUser> signInManager,
-        UserManager<TUser> userManager,
-        IUserStore<TUser> userStore,
+        SignInManager<ApplicationUser> signInManager,
+        UserManager<ApplicationUser> userManager,
+        IUserStore<ApplicationUser> userStore,
         ILogger<ExternalLoginModel> logger,
         IEmailSender emailSender)
     {
@@ -232,26 +233,26 @@ internal sealed class ExternalLoginModel<TUser> : ExternalLoginModel where TUser
         return Page();
     }
 
-    private TUser CreateUser()
+    private ApplicationUser CreateUser()
     {
         try
         {
-            return Activator.CreateInstance<TUser>();
+            return Activator.CreateInstance<ApplicationUser>();
         }
         catch
         {
-            throw new InvalidOperationException($"Can't create an instance of '{nameof(TUser)}'. " +
-                $"Ensure that '{nameof(TUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+            throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
+                $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                 $"override the external login page in /Areas/Identity/Pages/Account/ExternalLogin.cshtml");
         }
     }
 
-    private IUserEmailStore<TUser> GetEmailStore()
+    private IUserEmailStore<ApplicationUser> GetEmailStore()
     {
         if (!_userManager.SupportsUserEmail)
         {
             throw new NotSupportedException("The default UI requires a user store with email support.");
         }
-        return (IUserEmailStore<TUser>)_userStore;
+        return (IUserEmailStore<ApplicationUser>)_userStore;
     }
 }
