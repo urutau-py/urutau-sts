@@ -7,13 +7,15 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
+using urutau.Attributes;
+using urutau.Constants;
+using urutau.Services.Interfaces;
 
-namespace Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Internal;
+namespace urutau.Pages.Account;
 
 /// <summary>
 ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

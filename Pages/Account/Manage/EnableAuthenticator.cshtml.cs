@@ -3,14 +3,15 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
+using urutau.Attributes;
+using urutau.Constants;
 
-namespace Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Manage.Internal;
+namespace urutau.Pages.Account.Manage;
 
 /// <summary>
 ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

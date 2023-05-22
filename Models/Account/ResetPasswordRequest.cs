@@ -1,6 +1,6 @@
 namespace urutau.Models.Account;
 
-public class ResetPasswordRequest
+public sealed class ResetPasswordRequest
 {
-    
+    public string UserName { get; set; } = string.Empty;
 }

@@ -4,11 +4,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using urutau.Attributes;
 
-namespace Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Internal;
+namespace urutau.Pages.Account;
 
 /// <summary>
 ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

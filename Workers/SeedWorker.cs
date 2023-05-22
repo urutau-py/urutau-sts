@@ -33,6 +33,22 @@ public sealed class SeedWorker : IHostedService
                 }
             }, cancellationToken);
         }
+        
+        if (await manager.FindByClientIdAsync("app-test", cancellationToken) is null)
+        {
+            await manager.CreateAsync(new OpenIddictApplicationDescriptor
+            {
+                ClientId = "app-test",
+                ClientSecret = "388D45FA-B36B-4988-BA59-B187D329C207",
+                DisplayName = "My app-test",
+                Permissions =
+                {
+                    OpenIddictConstants.Permissions.Endpoints.Token,
+                    OpenIddictConstants.Permissions.GrantTypes.RefreshToken,
+                    OpenIddictConstants.Permissions.GrantTypes.Password
+                }
+            }, cancellationToken);
+        }
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
