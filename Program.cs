@@ -1,13 +1,16 @@
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Azure.Identity;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using urutau.Data;
 using urutau.Entities;
+using urutau.Models.Account;
 using urutau.Services;
 using urutau.Services.Interfaces;
+using urutau.Validators;
 using urutau.Workers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +25,14 @@ if (builder.Environment.IsProduction())
 
 // Add services to the container.
 builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddTransient<ISmsSender, SmsSender>();
+
+// Validation
+builder.Services.AddScoped<IValidator<RegisterRequest>, RegisterRequestValidator>();
+builder.Services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordRequestValidator>();
+builder.Services.AddScoped<IValidator<ResetPasswordRequest>, ResetPasswordRequestValidator>();
+builder.Services.AddScoped<IValidator<SendConfirmationEmailRequest>, SendConfirmationEmailRequestValidator>();
+builder.Services.AddScoped<IValidator<GenerateResetPasswordTokenRequest>, GenerateResetPasswordTokenRequestValidator>();
 
 
 builder.Services.AddControllers();

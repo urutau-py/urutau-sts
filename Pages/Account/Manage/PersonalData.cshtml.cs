@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using urutau.Attributes;
+using urutau.Entities;
 
 namespace urutau.Pages.Account.Manage;
 
@@ -12,8 +13,8 @@ namespace urutau.Pages.Account.Manage;
 ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
-[IdentityDefaultUI(typeof(PersonalDataModel<>))]
-public abstract class PersonalDataModel : PageModel
+[IdentityDefaultUI(typeof(PersonalDataModel))]
+public abstract class PersonalDataBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -22,13 +23,13 @@ public abstract class PersonalDataModel : PageModel
     public virtual Task<IActionResult> OnGet() => throw new NotImplementedException();
 }
 
-internal sealed class PersonalDataModel<TUser> : PersonalDataModel where TUser : class
+internal sealed class PersonalDataModel : PersonalDataBaseModel
 {
-    private readonly UserManager<TUser> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<PersonalDataModel> _logger;
 
     public PersonalDataModel(
-        UserManager<TUser> userManager,
+        UserManager<ApplicationUser> userManager,
         ILogger<PersonalDataModel> logger)
     {
         _userManager = userManager;

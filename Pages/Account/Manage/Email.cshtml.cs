@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using urutau.Attributes;
+using urutau.Entities;
 using urutau.Services.Interfaces;
 
 namespace urutau.Pages.Account.Manage;
@@ -17,8 +18,8 @@ namespace urutau.Pages.Account.Manage;
 ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
-[IdentityDefaultUI(typeof(EmailModel<>))]
-public abstract class EmailModel : PageModel
+[IdentityDefaultUI(typeof(EmailModel))]
+public abstract class EmailBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -81,15 +82,15 @@ public abstract class EmailModel : PageModel
     public virtual Task<IActionResult> OnPostSendVerificationEmailAsync() => throw new NotImplementedException();
 }
 
-internal sealed class EmailModel<TUser> : EmailModel where TUser : class
+internal sealed class EmailModel : EmailBaseModel
 {
-    private readonly UserManager<TUser> _userManager;
-    private readonly SignInManager<TUser> _signInManager;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IEmailSender _emailSender;
 
     public EmailModel(
-        UserManager<TUser> userManager,
-        SignInManager<TUser> signInManager,
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
         IEmailSender emailSender)
     {
         _userManager = userManager;
@@ -97,7 +98,7 @@ internal sealed class EmailModel<TUser> : EmailModel where TUser : class
         _emailSender = emailSender;
     }
 
-    private async Task LoadAsync(TUser user)
+    private async Task LoadAsync(ApplicationUser user)
     {
         var email = await _userManager.GetEmailAsync(user);
         Email = email;
@@ -147,7 +148,7 @@ internal sealed class EmailModel<TUser> : EmailModel where TUser : class
                 pageHandler: null,
                 values: new { area = "Identity", userId = userId, email = Input.NewEmail, code = code },
                 protocol: Request.Scheme)!;
-            await _emailSender.SendEmailAsync(
+            await _emailSender.SendAsync(
                 Input.NewEmail,
                 "Confirm your email",
                 $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
@@ -183,7 +184,7 @@ internal sealed class EmailModel<TUser> : EmailModel where TUser : class
             pageHandler: null,
             values: new { area = "Identity", userId = userId, code = code },
             protocol: Request.Scheme)!;
-        await _emailSender.SendEmailAsync(
+        await _emailSender.SendAsync(
             email!,
             "Confirm your email",
             $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");

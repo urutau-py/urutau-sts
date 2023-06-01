@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using urutau.Attributes;
+using urutau.Entities;
 using urutau.Services;
 using urutau.Services.Interfaces;
 
@@ -18,8 +19,8 @@ namespace urutau.Pages.Account;
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
 [AllowAnonymous]
-[IdentityDefaultUI(typeof(RegisterConfirmationModel<>))]
-public class RegisterConfirmationModel : PageModel
+[IdentityDefaultUI(typeof(RegisterConfirmationModel))]
+public class RegisterConfirmationBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -46,12 +47,12 @@ public class RegisterConfirmationModel : PageModel
     public virtual Task<IActionResult> OnGetAsync(string email, string? returnUrl = null) => throw new NotImplementedException();
 }
 
-internal sealed class RegisterConfirmationModel<TUser> : RegisterConfirmationModel where TUser : class
+internal sealed class RegisterConfirmationModel : RegisterConfirmationBaseModel
 {
-    private readonly UserManager<TUser> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEmailSender _sender;
 
-    public RegisterConfirmationModel(UserManager<TUser> userManager, IEmailSender sender)
+    public RegisterConfirmationModel(UserManager<ApplicationUser> userManager, IEmailSender sender)
     {
         _userManager = userManager;
         _sender = sender;

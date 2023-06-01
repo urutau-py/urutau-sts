@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using urutau.Attributes;
+using urutau.Entities;
 
 namespace urutau.Pages.Account.Manage;
 
@@ -13,8 +14,8 @@ namespace urutau.Pages.Account.Manage;
 ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
-[IdentityDefaultUI(typeof(IndexModel<>))]
-public abstract class IndexModel : PageModel
+[IdentityDefaultUI(typeof(IndexModel))]
+public abstract class IndexBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -64,20 +65,20 @@ public abstract class IndexModel : PageModel
     public virtual Task<IActionResult> OnPostAsync() => throw new NotImplementedException();
 }
 
-internal sealed class IndexModel<TUser> : IndexModel where TUser : class
+internal sealed class IndexModel : IndexBaseModel
 {
-    private readonly UserManager<TUser> _userManager;
-    private readonly SignInManager<TUser> _signInManager;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
 
     public IndexModel(
-        UserManager<TUser> userManager,
-        SignInManager<TUser> signInManager)
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager)
     {
         _userManager = userManager;
         _signInManager = signInManager;
     }
 
-    private async Task LoadAsync(TUser user)
+    private async Task LoadAsync(ApplicationUser user)
     {
         var userName = await _userManager.GetUserNameAsync(user);
         var phoneNumber = await _userManager.GetPhoneNumberAsync(user);

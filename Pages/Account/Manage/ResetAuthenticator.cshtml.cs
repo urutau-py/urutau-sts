@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using urutau.Attributes;
 using urutau.Constants;
+using urutau.Entities;
 
 namespace urutau.Pages.Account.Manage;
 
@@ -13,8 +14,8 @@ namespace urutau.Pages.Account.Manage;
 ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
-[IdentityDefaultUI(typeof(ResetAuthenticatorModel<>))]
-public abstract class ResetAuthenticatorModel : PageModel
+[IdentityDefaultUI(typeof(ResetAuthenticatorModel))]
+public abstract class ResetAuthenticatorBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -36,15 +37,15 @@ public abstract class ResetAuthenticatorModel : PageModel
     public virtual Task<IActionResult> OnPostAsync() => throw new NotImplementedException();
 }
 
-internal sealed class ResetAuthenticatorModel<TUser> : ResetAuthenticatorModel where TUser : class
+internal sealed class ResetAuthenticatorModel : ResetAuthenticatorBaseModel
 {
-    private readonly UserManager<TUser> _userManager;
-    private readonly SignInManager<TUser> _signInManager;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ILogger<ResetAuthenticatorModel> _logger;
 
     public ResetAuthenticatorModel(
-        UserManager<TUser> userManager,
-        SignInManager<TUser> signInManager,
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
         ILogger<ResetAuthenticatorModel> logger)
     {
         _userManager = userManager;

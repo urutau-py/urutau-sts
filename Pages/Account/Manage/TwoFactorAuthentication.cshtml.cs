@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using urutau.Attributes;
+using urutau.Entities;
 
 namespace urutau.Pages.Account.Manage;
 
@@ -12,8 +13,8 @@ namespace urutau.Pages.Account.Manage;
 ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
-[IdentityDefaultUI(typeof(TwoFactorAuthenticationModel<>))]
-public abstract class TwoFactorAuthenticationModel : PageModel
+[IdentityDefaultUI(typeof(TwoFactorAuthenticationModel))]
+public abstract class TwoFactorAuthenticationBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -60,14 +61,14 @@ public abstract class TwoFactorAuthenticationModel : PageModel
     public virtual Task<IActionResult> OnPostAsync() => throw new NotImplementedException();
 }
 
-internal sealed class TwoFactorAuthenticationModel<TUser> : TwoFactorAuthenticationModel where TUser : class
+internal sealed class TwoFactorAuthenticationModel : TwoFactorAuthenticationBaseModel
 {
-    private readonly UserManager<TUser> _userManager;
-    private readonly SignInManager<TUser> _signInManager;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ILogger<TwoFactorAuthenticationModel> _logger;
 
     public TwoFactorAuthenticationModel(
-        UserManager<TUser> userManager, SignInManager<TUser> signInManager, ILogger<TwoFactorAuthenticationModel> logger)
+        UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<TwoFactorAuthenticationModel> logger)
     {
         _userManager = userManager;
         _signInManager = signInManager;

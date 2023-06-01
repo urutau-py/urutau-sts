@@ -95,7 +95,7 @@ internal sealed class ResendEmailConfirmationModel : ResendEmailConfirmationBase
             pageHandler: null,
             values: new { userId = userId, code = code },
             protocol: Request.Scheme)!;
-        await _emailSender.SendEmailAsync(
+        await _emailSender.SendAsync(
             Input.Email,
             "Confirm your email",
             $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using urutau.Attributes;
 using urutau.Constants;
+using urutau.Entities;
 
 namespace urutau.Pages.Account.Manage;
 
@@ -13,8 +14,8 @@ namespace urutau.Pages.Account.Manage;
 ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
-[IdentityDefaultUI(typeof(GenerateRecoveryCodesModel<>))]
-public abstract class GenerateRecoveryCodesModel : PageModel
+[IdentityDefaultUI(typeof(GenerateRecoveryCodesModel))]
+public abstract class GenerateRecoveryCodesBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -43,13 +44,13 @@ public abstract class GenerateRecoveryCodesModel : PageModel
     public virtual Task<IActionResult> OnPostAsync() => throw new NotImplementedException();
 }
 
-internal sealed class GenerateRecoveryCodesModel<TUser> : GenerateRecoveryCodesModel where TUser : class
+internal sealed class GenerateRecoveryCodesModel : GenerateRecoveryCodesBaseModel
 {
-    private readonly UserManager<TUser> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<GenerateRecoveryCodesModel> _logger;
 
     public GenerateRecoveryCodesModel(
-        UserManager<TUser> userManager,
+        UserManager<ApplicationUser> userManager,
         ILogger<GenerateRecoveryCodesModel> logger)
     {
         _userManager = userManager;

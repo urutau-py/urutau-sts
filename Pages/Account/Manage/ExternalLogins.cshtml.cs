@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using urutau.Attributes;
+using urutau.Entities;
 
 namespace urutau.Pages.Account.Manage;
 
@@ -13,8 +14,8 @@ namespace urutau.Pages.Account.Manage;
 ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
-[IdentityDefaultUI(typeof(ExternalLoginsModel<>))]
-public abstract class ExternalLoginsModel : PageModel
+[IdentityDefaultUI(typeof(ExternalLoginsModel))]
+public abstract class ExternalLoginsBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -66,16 +67,16 @@ public abstract class ExternalLoginsModel : PageModel
     public virtual Task<IActionResult> OnGetLinkLoginCallbackAsync() => throw new NotImplementedException();
 }
 
-internal sealed class ExternalLoginsModel<TUser> : ExternalLoginsModel where TUser : class
+internal sealed class ExternalLoginsModel : ExternalLoginsBaseModel
 {
-    private readonly UserManager<TUser> _userManager;
-    private readonly SignInManager<TUser> _signInManager;
-    private readonly IUserStore<TUser> _userStore;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IUserStore<ApplicationUser> _userStore;
 
     public ExternalLoginsModel(
-        UserManager<TUser> userManager,
-        SignInManager<TUser> signInManager,
-        IUserStore<TUser> userStore)
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
+        IUserStore<ApplicationUser> userStore)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -96,7 +97,7 @@ internal sealed class ExternalLoginsModel<TUser> : ExternalLoginsModel where TUs
             .ToList();
 
         string? passwordHash = null;
-        if (_userStore is IUserPasswordStore<TUser> userPasswordStore)
+        if (_userStore is IUserPasswordStore<ApplicationUser> userPasswordStore)
         {
             passwordHash = await userPasswordStore.GetPasswordHashAsync(user, HttpContext.RequestAborted);
         }

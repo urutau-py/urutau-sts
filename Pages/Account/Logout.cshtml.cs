@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using urutau.Attributes;
 using urutau.Constants;
+using urutau.Entities;
 
 namespace urutau.Pages.Account;
 
@@ -15,8 +16,8 @@ namespace urutau.Pages.Account;
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
 [AllowAnonymous]
-[IdentityDefaultUI(typeof(LogoutModel<>))]
-public abstract class LogoutModel : PageModel
+[IdentityDefaultUI(typeof(LogoutModel))]
+public abstract class LogoutBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -33,12 +34,12 @@ public abstract class LogoutModel : PageModel
     public virtual Task<IActionResult> OnPost(string? returnUrl = null) => throw new NotImplementedException();
 }
 
-internal sealed class LogoutModel<TUser> : LogoutModel where TUser : class
+internal sealed class LogoutModel : LogoutBaseModel
 {
-    private readonly SignInManager<TUser> _signInManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ILogger<LogoutModel> _logger;
 
-    public LogoutModel(SignInManager<TUser> signInManager, ILogger<LogoutModel> logger)
+    public LogoutModel(SignInManager<ApplicationUser> signInManager, ILogger<LogoutModel> logger)
     {
         _signInManager = signInManager;
         _logger = logger;

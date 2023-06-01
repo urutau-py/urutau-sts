@@ -11,4 +11,10 @@ public sealed class HealthCheckController : ControllerBase
     {
         return Ok("ok");
     }
+    
+    [HttpPost("ping")]
+    public IActionResult Ping()
+    {
+        return Ok("pong");
+    }
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using urutau.Attributes;
 using urutau.Constants;
+using urutau.Entities;
 
 namespace urutau.Pages.Account.Manage;
 
@@ -14,8 +15,8 @@ namespace urutau.Pages.Account.Manage;
 ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
-[IdentityDefaultUI(typeof(DeletePersonalDataModel<>))]
-public abstract class DeletePersonalDataModel : PageModel
+[IdentityDefaultUI(typeof(DeletePersonalDataModel))]
+public abstract class DeletePersonalDataBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -58,15 +59,15 @@ public abstract class DeletePersonalDataModel : PageModel
     public virtual Task<IActionResult> OnPostAsync() => throw new NotImplementedException();
 }
 
-internal sealed class DeletePersonalDataModel<TUser> : DeletePersonalDataModel where TUser : class
+internal sealed class DeletePersonalDataModel : DeletePersonalDataBaseModel
 {
-    private readonly UserManager<TUser> _userManager;
-    private readonly SignInManager<TUser> _signInManager;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ILogger<DeletePersonalDataModel> _logger;
 
     public DeletePersonalDataModel(
-        UserManager<TUser> userManager,
-        SignInManager<TUser> signInManager,
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
         ILogger<DeletePersonalDataModel> logger)
     {
         _userManager = userManager;

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using urutau.Attributes;
 using urutau.Constants;
+using urutau.Entities;
 
 namespace urutau.Pages.Account.Manage;
 
@@ -14,8 +15,8 @@ namespace urutau.Pages.Account.Manage;
 ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
-[IdentityDefaultUI(typeof(DownloadPersonalDataModel<>))]
-public abstract class DownloadPersonalDataModel : PageModel
+[IdentityDefaultUI(typeof(DownloadPersonalDataModel))]
+public abstract class DownloadPersonalDataBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -30,13 +31,13 @@ public abstract class DownloadPersonalDataModel : PageModel
     public virtual Task<IActionResult> OnPostAsync() => throw new NotImplementedException();
 }
 
-internal sealed class DownloadPersonalDataModel<TUser> : DownloadPersonalDataModel where TUser : class
+internal sealed class DownloadPersonalDataModel : DownloadPersonalDataBaseModel
 {
-    private readonly UserManager<TUser> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<DownloadPersonalDataModel> _logger;
 
     public DownloadPersonalDataModel(
-        UserManager<TUser> userManager,
+        UserManager<ApplicationUser> userManager,
         ILogger<DownloadPersonalDataModel> logger)
     {
         _userManager = userManager;
@@ -60,7 +61,7 @@ internal sealed class DownloadPersonalDataModel<TUser> : DownloadPersonalDataMod
 
         // Only include personal data for download
         var personalData = new Dictionary<string, string?>();
-        var personalDataProps = typeof(TUser).GetProperties().Where(
+        var personalDataProps = typeof(ApplicationUser).GetProperties().Where(
                         prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
         foreach (var p in personalDataProps)
         {

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using urutau.Attributes;
+using urutau.Entities;
 
 namespace urutau.Pages.Account;
 
@@ -17,8 +18,8 @@ namespace urutau.Pages.Account;
 ///     directly from your code. This API may change or be removed in future releases.
 /// </summary>
 [AllowAnonymous]
-[IdentityDefaultUI(typeof(ResetPasswordModel<>))]
-public abstract class ResetPasswordModel : PageModel
+[IdentityDefaultUI(typeof(ResetPasswordModel))]
+public abstract class ResetPasswordBaseModel : PageModel
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -80,11 +81,11 @@ public abstract class ResetPasswordModel : PageModel
     public virtual Task<IActionResult> OnPostAsync() => throw new NotImplementedException();
 }
 
-internal sealed class ResetPasswordModel<TUser> : ResetPasswordModel where TUser : class
+internal sealed class ResetPasswordModel : ResetPasswordBaseModel
 {
-    private readonly UserManager<TUser> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public ResetPasswordModel(UserManager<TUser> userManager)
+    public ResetPasswordModel(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
     }
