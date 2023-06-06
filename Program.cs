@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using Azure.Identity;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
@@ -11,6 +9,7 @@ using urutau.Models.Account;
 using urutau.Services;
 using urutau.Services.Interfaces;
 using urutau.Validators;
+using urutau.Validators.Accounts;
 using urutau.Workers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +33,7 @@ builder.Services.AddScoped<IValidator<ResetPasswordRequest>, ResetPasswordReques
 builder.Services.AddScoped<IValidator<SendConfirmationEmailRequest>, SendConfirmationEmailRequestValidator>();
 builder.Services.AddScoped<IValidator<GenerateResetPasswordTokenRequest>, GenerateResetPasswordTokenRequestValidator>();
 
+builder.Services.AddHealthChecks();
 
 builder.Services.AddControllers();
 builder.Services.AddRazorPages();
@@ -152,5 +152,7 @@ app.MapRazorPages();
 
 app.MapControllers();
 app.MapDefaultControllerRoute();
+
+app.MapHealthChecks("/healthz");
 
 app.Run();

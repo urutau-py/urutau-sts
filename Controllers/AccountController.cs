@@ -32,7 +32,7 @@ public sealed class AccountController : ControllerBase
         var validation = await validator.ValidateAsync(request, cancellationToken);
         if (!validation.IsValid)
         {
-            return BadRequest(new DefaultResponse(false, validation.Errors.Select(x => x.ErrorMessage).ToList()));
+            return BadRequest(new DefaultResponse(false, validation.Errors.Select(x => new DefaultError(x.ErrorCode, x.ErrorMessage)).ToList()));
         }
 
         var user = new ApplicationUser
@@ -55,7 +55,7 @@ public sealed class AccountController : ControllerBase
 
         if (!result.Succeeded)
         {
-            return BadRequest(new DefaultResponse(false, result.Errors.Select(x => x.Description).ToList()));
+            return BadRequest(new DefaultResponse(false, result.Errors.Select(x => new DefaultError(x.Code, x.Description)).ToList()));
         }
 
 
@@ -63,7 +63,7 @@ public sealed class AccountController : ControllerBase
         if (!passwordResult.Succeeded)
         {
             return BadRequest(new DefaultResponse(passwordResult.Succeeded,
-                passwordResult.Errors.Select(x => x.Description).ToList()));
+                passwordResult.Errors.Select(x => new DefaultError(x.Code, x.Description)).ToList()));
         }
 
         await SendConfirmationEmail(user, cancellationToken);
@@ -87,13 +87,13 @@ public sealed class AccountController : ControllerBase
         var validation = await validator.ValidateAsync(request, cancellationToken);
         if (!validation.IsValid)
         {
-            return BadRequest(new DefaultResponse(false, validation.Errors.Select(x => x.ErrorMessage).ToList()));
+            return BadRequest(new DefaultResponse(false, validation.Errors.Select(x => new DefaultError(x.ErrorCode, x.ErrorMessage)).ToList()));
         }
 
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
 
         if (user is null)
-            return BadRequest(new DefaultResponse(false, new List<string> {"User not found"}));
+            return BadRequest(new DefaultResponse(false, new DefaultError("userNotFound", "User not found")));
 
         var result = await _userManager.GeneratePasswordResetTokenAsync(user);
 
@@ -113,13 +113,13 @@ public sealed class AccountController : ControllerBase
         var validation = await validator.ValidateAsync(request, cancellationToken);
         if (!validation.IsValid)
         {
-            return BadRequest(new DefaultResponse(false, validation.Errors.Select(x => x.ErrorMessage).ToList()));
+            return BadRequest(new DefaultResponse(false, validation.Errors.Select(x => new DefaultError(x.ErrorCode, x.ErrorMessage)).ToList()));
         }
 
         var user = await _userManager.FindByEmailAsync(request.Email);
 
         if (user is null)
-            return BadRequest(new DefaultResponse(false, new List<string> {"User not found"}));
+            return BadRequest(new DefaultResponse(false, new List<DefaultError> {new DefaultError("userNotFound", "User not found")}));
 
         var result = await _userManager.GeneratePasswordResetTokenAsync(user);
 
@@ -139,18 +139,18 @@ public sealed class AccountController : ControllerBase
         var validation = await validator.ValidateAsync(request, cancellationToken);
         if (!validation.IsValid)
         {
-            return BadRequest(new DefaultResponse(false, validation.Errors.Select(x => x.ErrorMessage).ToList()));
+            return BadRequest(new DefaultResponse(false, validation.Errors.Select(x => new DefaultError(x.ErrorCode, x.ErrorMessage)).ToList()));
         }
         
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
 
         if (user is null)
-            return BadRequest(new DefaultResponse(false, new List<string> {"User not found"}));
+            return BadRequest(new DefaultResponse(false, new List<DefaultError> { new DefaultError("userNotFound", "User not found")}));
 
         var result = await _userManager.ResetPasswordAsync(user, request.Token, request.Password);
 
         var response = new DefaultResponse(result.Succeeded, 
-            result.Succeeded ? new List<string>() : result.Errors.Select(x => x.Description).ToList());
+            result.Succeeded ? new List<DefaultError>() : result.Errors.Select(x => new DefaultError(x.Code, x.Description)).ToList());
         
         return Ok(response);
     }
@@ -162,16 +162,16 @@ public sealed class AccountController : ControllerBase
         var validation = await validator.ValidateAsync(request, cancellationToken);
         if (!validation.IsValid)
         {
-            return BadRequest(new DefaultResponse(false, validation.Errors.Select(x => x.ErrorMessage).ToList()));
+            return BadRequest(new DefaultResponse(false, validation.Errors.Select(x => new DefaultError(x.ErrorCode, x.ErrorMessage)).ToList()));
         }
         
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
 
         if (user is null)
-            return BadRequest(new DefaultResponse(false, new List<string> {"User not found"}));
+            return BadRequest(new DefaultResponse(false, new List<DefaultError> {new DefaultError("userNotFound", "User not found")}));
 
         if (string.IsNullOrWhiteSpace(user.Email))
-            return BadRequest(new DefaultResponse(false, new List<string> {"User does not have an email"}));
+            return BadRequest(new DefaultResponse(false, new List<DefaultError> {new DefaultError("invalidEmail", "User does not have an email") }));
 
         var result = await SendConfirmationEmail(user, cancellationToken);
         
@@ -197,9 +197,9 @@ public sealed class AccountController : ControllerBase
             $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.", cancellationToken);
     }
     
-    private async Task<List<string>> ValidatePassword(ApplicationUser user, string newPassword)
+    private async Task<List<DefaultError>> ValidatePassword(ApplicationUser user, string newPassword)
     {
-        var passwordErrors = new List<string>();
+        var passwordErrors = new List<DefaultError>();
 
         var validators = _userManager.PasswordValidators;
 
@@ -208,7 +208,7 @@ public sealed class AccountController : ControllerBase
             var result = await validator.ValidateAsync(_userManager, user, newPassword);
 
             if (result.Succeeded) continue;
-            passwordErrors.AddRange(result.Errors.Select(error => error.Description));
+            passwordErrors.AddRange(result.Errors.Select(error => new DefaultError(error.Code, error.Description)));
         }
 
         return passwordErrors;

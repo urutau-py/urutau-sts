@@ -2,7 +2,7 @@ using FluentValidation;
 using urutau.Constants;
 using urutau.Models.Account;
 
-namespace urutau.Validators;
+namespace urutau.Validators.Accounts;
 
 public sealed class ChangePasswordRequestValidator : AbstractValidator<ChangePasswordRequest>
 {
